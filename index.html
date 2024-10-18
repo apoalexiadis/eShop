@@ -18,9 +18,17 @@
             margin-top: 20px;
             color: #4CAF50;
         }
+
+        /* Consistent width and margin for both product table and cart */
+        .content-wrapper {
+            max-width: 1200px; /* Set a maximum width */
+            margin: 0 auto; /* Center both elements */
+            padding: 0 20px; /* Add a bit of space on the left and right */
+        }
+
         table {
             width: 100%;
-            margin: 10px;
+            margin: 10px 0;
             border-collapse: collapse;
         }
         table, th, td {
@@ -52,14 +60,18 @@
         button:hover:enabled {
             background-color: #45a049;
         }
+
+        /* Initial CSS for hiding the cart */
         #cart {
-            width: 100%;
+            display: none;
+            width: 100%; /* Match the width of the table */
             background-color: #333;
             color: white;
             padding: 15px;
             margin-top: 20px;
             border: 1px solid #444;
         }
+
         #cart h2 {
             color: #4CAF50;
             margin-bottom: 10px;
@@ -148,7 +160,7 @@
             background-color: #45a049;
         }
         footer {
-            text-align: center;
+            text-align: left;
             margin-top: 50px;
             padding: 10px;
             background-color: #333;
@@ -165,6 +177,10 @@
 
         /* Responsive Design for Mobile Screens */
         @media (max-width: 768px) {
+            .content-wrapper {
+                max-width: 100%; /* Adjust the max-width for smaller screens */
+                padding: 0 10px; /* Smaller padding */
+            }
             table {
                 width: 100%;
                 margin: 0 auto;
@@ -200,6 +216,10 @@
 
         /* Further Adjustments for Small Screens (Mobile Phones) */
         @media (max-width: 480px) {
+            .content-wrapper {
+                max-width: 100%; /* Ensure full width on mobile */
+                padding: 0 5px;
+            }
             table {
                 width: 100%;
             }
@@ -230,49 +250,51 @@
 
 <h1>E-Shop Technology Products</h1>
 
-<div id="sortOptions">
-    <label for="sort">Sort by: </label>
-    <select id="sort" onchange="sortProducts()">
-        <option value="default">Default</option>
-        <option value="priceAsc">Price (Low to High)</option>
-        <option value="priceDesc">Price (High to Low)</option>
-    </select>
-</div>
+<div class="content-wrapper">
+    <div id="sortOptions">
+        <label for="sort">Sort by: </label>
+        <select id="sort" onchange="sortProducts()">
+            <option value="default">Default</option>
+            <option value="priceAsc">Price (Low to High)</option>
+            <option value="priceDesc">Price (High to Low)</option>
+        </select>
+    </div>
 
-<table id="productTable">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Code</th>
-            <th>Price</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Products will be added via JavaScript -->
-    </tbody>
-</table>
-
-<div id="cart">
-    <h2>Shopping Cart</h2>
-    <table>
+    <table id="productTable">
         <thead>
             <tr>
-                <th>Code</th>
                 <th>Name</th>
+                <th>Code</th>
                 <th>Price</th>
-                <th>Quantity</th>
-                <th>Subtotal</th>
-                <th>Remove</th>
+                <th>Action</th>
             </tr>
         </thead>
-        <tbody id="cartItems">
-            <!-- Cart items will be added via JavaScript -->
+        <tbody>
+            <!-- Products will be added via JavaScript -->
         </tbody>
     </table>
-    <div id="cartTotal">Total: 0 €</div>
-    <button id="clearCart" onclick="clearCart()" disabled>Clear Cart</button>
-    <button id="checkout" onclick="checkout()" disabled>Checkout</button>
+
+    <div id="cart">
+        <h2>Shopping Cart</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Remove</th>
+                </tr>
+            </thead>
+            <tbody id="cartItems">
+                <!-- Cart items will be added via JavaScript -->
+            </tbody>
+        </table>
+        <div id="cartTotal">Total: 0 €</div>
+        <button id="clearCart" onclick="clearCart()" disabled>Clear Cart</button>
+        <button id="checkout" onclick="checkout()" disabled>Checkout</button>
+    </div>
 </div>
 
 <div id="notification">Item Added to Cart!</div>
@@ -343,6 +365,7 @@ function addToCart(code) {
 // Update the cart display
 function updateCart() {
     const cartItems = document.querySelector("#cartItems");
+    const cartContainer = document.querySelector("#cart"); // Reference the cart container
     cartItems.innerHTML = ""; // Clear the cart display before updating
     let total = 0;
 
@@ -374,9 +397,11 @@ function updateCart() {
     if (cart.length > 0) {
         clearCartButton.disabled = false;
         checkoutButton.disabled = false;
+        cartContainer.style.display = 'block';  // Show the cart when items are present
     } else {
         clearCartButton.disabled = true;
         checkoutButton.disabled = true;
+        cartContainer.style.display = 'none';  // Hide the cart when empty
     }
 }
 
