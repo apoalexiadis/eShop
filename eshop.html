@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #4CAF50;
+        }
+        table {
+            width: 40%;
+            margin: 10px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #444;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #333;
+            color: #f5f5f5;
+        }
+        td {
+            background-color: #2a2a2a;
+        }
+        table tr:hover {
+            background-color: #3a3a3a;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover:enabled {
+            background-color: #45a049;
+        }
+        #cart {
+            position: fixed;
+            top: 120px;
+            right: 10px;
+            width: 600px;
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            border: 1px solid #444;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        #cart h2 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        #cart table {
+            width: 100%;
+        }
+        #cart table, #cart th, #cart td {
+            border: none;
+        }
+        #cart th, #cart td {
+            padding: 5px;
+            text-align: left;
+        }
+        #cart tbody {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        #cartTotal {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        #clearCart, #checkout {
+            margin-top: 10px;
+            padding: 10px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #clearCart {
+            background-color: #ff4d4d;
+        }
+        #checkout {
+            background-color: #4CAF50;
+        }
+        #clearCart:hover:enabled {
+            background-color: #ff3333;
+        }
+        #checkout:hover:enabled {
+            background-color: #45a049;
+        }
+        /* Sorting dropdown */
+        #sortOptions {
+            display: flex;
+            justify-content: left;
+            margin-bottom: 20px;
+        }
+        /* Light mode styles */
+        .light-mode {
+            background-color: #f5f5f5;
+            color: #1e1e1e;
+        }
+        .light-mode table, .light-mode th, .light-mode td {
+            border-color: #ddd;
+        }
+        .light-mode th {
+            background-color: #f0f0f0;
+            color: #1e1e1e;
+        }
+        .light-mode td {
+            background-color: #fff;
+        }
+        .light-mode #cart {
+            background-color: #f0f0f0;
+            color: #1e1e1e;
+        }
+        /* Success notification */
+        #notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1001;
+        }
+        /* Toggle button at the bottom right */
+        #toggleThemeBtn {
+            position: fixed;
+            right: 20px;
+            bottom: 50px;
+            background-color: #4CAF50;
+            padding: 10px 15px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        #toggleThemeBtn:hover {
+            background-color: #45a049;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 10px;
+            background-color: #333;
+            color: #f5f5f5;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        footer img {
+            width: 18px; /* Smaller LinkedIn icon */
+            height: 18px;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>E-Shop Technology Products</h1>
+
+<div id="sortOptions">
+    <label for="sort">Sort by: </label>
+    <select id="sort" onchange="sortProducts()">
+        <option value="default">Default</option>
+        <option value="priceAsc">Price (Low to High)</option>
+        <option value="priceDesc">Price (High to Low)</option>
+    </select>
+</div>
+
+<table id="productTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Price</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Products will be added via JavaScript -->
+    </tbody>
+</table>
+
+<div id="cart">
+    <h2>Shopping Cart</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody id="cartItems">
+            <!-- Cart items will be added via JavaScript -->
+        </tbody>
+    </table>
+    <div id="cartTotal">Total: 0 €</div>
+    <button id="clearCart" onclick="clearCart()" disabled>Clear Cart</button>
+    <button id="checkout" onclick="checkout()" disabled>Checkout</button>
+</div>
+
+<div id="notification">Item Added to Cart!</div>
+
+<button id="toggleThemeBtn" onclick="toggleTheme()">Toggle Dark Mode</button>
+
+<footer>
+    Developed by Apostolos Alexiadis
+    <a href="https://www.linkedin.com/in/apostolos-alexiadis/" target="_blank">
+        <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn">
+    </a>
+</footer>
+
+<script>
+// Product data for technology products
+const products = [
+    { name: "iPhone 14", code: "IP001", price: 1099 },
+    { name: "Samsung Galaxy S23", code: "SG002", price: 999 },
+    { name: "MacBook Pro 16\"", code: "MB003", price: 2499 },
+    { name: "Dell XPS 13", code: "DX004", price: 1399 },
+    { name: "iPad Pro 12.9\"", code: "IP005", price: 1199 },
+    { name: "Samsung Galaxy Tab S8", code: "SG006", price: 899 }
+];
+
+// Shopping cart array
+let cart = [];
+
+// Load products into the product table
+function loadProducts() {
+    const productTable = document.querySelector("#productTable tbody");
+    productTable.innerHTML = '';  // Clear table before adding products
+    products.forEach(product => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${product.name}</td>
+            <td>${product.code}</td>
+            <td>${product.price} €</td>
+            <td><button onclick="addToCart('${product.code}')">Add to Cart</button></td>
+        `;
+        productTable.appendChild(row);
+    });
+}
+
+// Add a product to the cart
+function addToCart(code) {
+    const product = products.find(p => p.code === code);
+    const cartItem = cart.find(item => item.code === code);
+
+    if (cartItem) {
+        // If product is already in the cart, increase the quantity
+        cartItem.quantity += 1;
+        cartItem.subtotal = cartItem.quantity * cartItem.price;
+    } else {
+        // If product is not in the cart, add it
+        cart.push({
+            code: product.code,
+            name: product.name,
+            price: product.price,
+            quantity: 1,
+            subtotal: product.price
+        });
+    }
+    updateCart();
+    saveCart();
+    showNotification('Item Added to Cart!');
+}
+
+// Update the cart display
+function updateCart() {
+    const cartItems = document.querySelector("#cartItems");
+    cartItems.innerHTML = ""; // Clear the cart display before updating
+    let total = 0;
+
+    cart.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${item.code}</td>
+            <td>${item.name}</td>
+            <td>${item.price} €</td>
+            <td>
+                <button onclick="changeQuantity('${item.code}', -1)">-</button>
+                ${item.quantity}
+                <button onclick="changeQuantity('${item.code}', 1)">+</button>
+            </td>
+            <td>${item.subtotal} €</td>
+            <td><button onclick="removeFromCart('${item.code}')">Remove</button></td>
+        `;
+        cartItems.appendChild(row);
+        total += item.subtotal;
+    });
+
+    // Update total
+    document.querySelector("#cartTotal").innerText = `Total: ${total} €`;
+
+    // Enable or disable the buttons based on cart status
+    const clearCartButton = document.querySelector("#clearCart");
+    const checkoutButton = document.querySelector("#checkout");
+
+    if (cart.length > 0) {
+        clearCartButton.disabled = false;
+        checkoutButton.disabled = false;
+    } else {
+        clearCartButton.disabled = true;
+        checkoutButton.disabled = true;
+    }
+}
+
+// Change quantity of a product in the cart
+function changeQuantity(code, change) {
+    const cartItem = cart.find(item => item.code === code);
+    if (cartItem) {
+        cartItem.quantity = Math.max(1, cartItem.quantity + change); // Prevent quantity < 1
+        cartItem.subtotal = cartItem.quantity * cartItem.price;
+        updateCart();
+        saveCart();
+        showNotification('Cart Updated!');
+    }
+}
+
+// Save cart to localStorage
+function saveCart() {
+    localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+// Load cart from localStorage
+function loadCart() {
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCart();
+    }
+}
+
+// Remove item from cart
+function removeFromCart(code) {
+    cart = cart.filter(item => item.code !== code);
+    updateCart();
+    saveCart();
+    showNotification('Item Removed from Cart!');
+}
+
+// Clear the cart
+function clearCart() {
+    cart = []; // Empty the cart array
+    updateCart(); // Refresh the cart display
+    saveCart(); // Clear local storage
+    showNotification('Cart Cleared!');
+}
+
+// Complete the purchase
+function checkout() {
+    let total = cart.reduce((sum, item) => sum + item.subtotal, 0);
+    alert(`Purchase completed. Total: ${total} €`);
+    clearCart(); // Clear the cart after checkout
+}
+
+// Show success/error notifications
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    notification.innerText = message;
+    notification.style.display = 'block';
+    setTimeout(() => { notification.style.display = 'none'; }, 2000);
+}
+
+// Toggle between dark and light modes
+function toggleTheme() {
+    document.body.classList.toggle("light-mode");
+}
+
+// Sort products based on the selected option
+function sortProducts() {
+    const sortOption = document.getElementById("sort").value;
+    if (sortOption === "priceAsc") {
+        products.sort((a, b) => a.price - b.price);
+    } else if (sortOption === "priceDesc") {
+        products.sort((a, b) => b.price - a.price);
+    } else {
+        // Reset to default (assuming the initial order is stored elsewhere)
+        products.sort((a, b) => a.code.localeCompare(b.code));
+    }
+    loadProducts(); // Reload the product list after sorting
+}
+
+// Call the function to load products when the page loads
+window.onload = function() {
+    loadProducts();
+    loadCart(); // Load the cart from local storage
+};
+</script>
+
+</body>
+</html>
